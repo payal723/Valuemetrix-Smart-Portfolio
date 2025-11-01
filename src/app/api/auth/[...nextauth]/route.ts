@@ -12,18 +12,26 @@ const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email }
         });
-        if (!user) return null;
+
+        if (!user) {
+          return null;
+        }
 
         const isPasswordValid = await bcrypt.compare(
           credentials.password,
           user.password
         );
-        if (!isPasswordValid) return null;
+
+        if (!isPasswordValid) {
+          return null;
+        }
 
         return {
           id: user.id,
@@ -33,15 +41,23 @@ const authOptions: NextAuthOptions = {
       }
     })
   ],
-  session: { strategy: 'jwt' },
-  pages: { signIn: '/auth/signin' },
+  session: {
+    strategy: 'jwt',
+  },
+  pages: {
+    signIn: '/auth/signin',
+  },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user) {
+        token.id = user.id;
+      }
       return token;
     },
     async session({ session, token }) {
-      if (session.user) (session.user as any).id = token.id;
+      if (session.user) {
+        (session.user as any).id = token.id;
+      }
       return session;
     },
   },
@@ -50,3 +66,5 @@ const authOptions: NextAuthOptions = {
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
+
+export { authOptions };
