@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getQuote, getCompanyProfile } from '@/lib/finnhub';
@@ -20,7 +19,6 @@ export async function POST(
       return NextResponse.json({ error: 'Portfolio not found' }, { status: 404 });
     }
 
-    // Fetch current prices and company info
     const holdingsWithData = await Promise.all(
       portfolio.holdings.map(async (holding) => {
         const quote = await getQuote(holding.ticker);
@@ -37,7 +35,6 @@ export async function POST(
       })
     );
 
-    // Generate AI insights
     const insights = await generatePortfolioInsights(
       holdingsWithData,
       portfolio.cash,
@@ -48,7 +45,6 @@ export async function POST(
       return NextResponse.json({ error: 'Failed to generate insights' }, { status: 500 });
     }
 
-    // Save insights to database
     const savedInsight = await prisma.aIInsight.create({
       data: {
         portfolioId,

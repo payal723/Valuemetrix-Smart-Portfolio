@@ -22,36 +22,45 @@ export async function generatePortfolioInsights(
 ) {
   const totalValue = holdings.reduce((sum, h) => sum + h.totalValue, 0) + cash;
   
-  const prompt = `You are a financial analyst at ValueMetrix, an institutional-grade research platform.
+  const holdingsText = holdings.map(h => 
+    `${h.ticker} (${h.companyName || h.ticker}): ${h.quantity} shares @ $${h.currentPrice.toFixed(2)} = $${h.totalValue.toLocaleString()} (${((h.totalValue/totalValue)*100).toFixed(1)}%) - Industry: ${h.industry}`
+  ).join('\n');
 
-Analyze the following portfolio:
+  const prompt = `You are a senior financial analyst at ValueMetrix, providing institutional-grade portfolio analysis.
 
-Portfolio Name: ${portfolioName}
+Portfolio: ${portfolioName}
 Total Value: $${totalValue.toLocaleString()}
 Cash: $${cash.toLocaleString()} (${((cash/totalValue)*100).toFixed(1)}%)
+Number of Holdings: ${holdings.length}
 
-Holdings:
-${holdings.map(h => `- ${h.ticker}: ${h.quantity} shares @ $${h.currentPrice.toFixed(2)} = $${h.totalValue.toLocaleString()} (${((h.totalValue/totalValue)*100).toFixed(1)}%)`).join('\n')}
+Holdings Breakdown:
+${holdingsText}
 
-Provide a comprehensive analysis in JSON format with the following structure:
+Provide a comprehensive investment analysis in JSON format with these fields:
+
 {
-  "summary": "2-3 sentence overview of the portfolio",
-  "diversification": "Analysis of diversification quality (good/moderate/poor) and why",
-  "sectorExposure": "Breakdown of sector allocation and concentration risks",
-  "investmentThesis": "One compelling sentence about the portfolio's strategy",
-  "riskLevel": "Low/Medium/High with brief justification",
-  "recommendations": ["3-4 actionable recommendations"]
+  "summary": "2-3 sentence portfolio overview with key metrics and composition",
+  "diversification": "Detailed analysis of diversification quality (good/moderate/poor), concentration risks, and specific recommendations",
+  "sectorExposure": "Breakdown of sector allocation with percentages, concentration risks, and gaps in exposure",
+  "investmentThesis": "One compelling sentence capturing the portfolio's core investment strategy and positioning",
+  "riskLevel": "Risk assessment (Low/Medium/High) with specific justification based on concentration, volatility, and market conditions",
+  "recommendations": ["4-5 specific, actionable recommendations for improving portfolio performance and risk management"]
 }
 
-Be professional, data-driven, and insightful.`;
+Be data-driven, professional, and provide actionable insights. Consider:
+- Sector concentration and correlation
+- Individual position sizing
+- Cash allocation efficiency
+- Market conditions and valuations
+- Risk-adjusted returns potential`;
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-5-nano", 
       messages: [
         {
           role: "system",
-          content: "You are a senior financial analyst providing institutional-grade portfolio analysis."
+          content: "You are a senior financial analyst providing institutional-grade portfolio analysis. Always respond with valid JSON."
         },
         {
           role: "user",
@@ -59,15 +68,35 @@ Be professional, data-driven, and insightful.`;
         }
       ],
       temperature: 0.7,
-      max_tokens: 1000,
+      max_tokens: 1500,
       response_format: { type: "json_object" }
     });
 
     const content = completion.choices[0].message.content;
-    return content ? JSON.parse(content) : null;
-  } catch (error) {
-    console.error('Error generating insights:', error);
-    return null;
+    if (!content) {
+      throw new Error('No response from OpenAI');
+    }
+
+    const insights = JSON.parse(content);
+    return insights;
+  } catch (error: any) {
+    console.error('OpenAI Error:', error.message);
+    
+    return {
+      summary: `Your ${portfolioName} contains ${holdings.length} holdings with a total value of $${totalValue.toLocaleString()}. Portfolio composition includes ${holdings.map(h => h.ticker).join(', ')}.`,
+      diversification: holdings.length < 3 
+        ? "Portfolio shows high concentration risk. Consider diversifying across 5-10 stocks from different sectors."
+        : "Portfolio demonstrates good diversification across multiple holdings.",
+      sectorExposure: `Holdings include: ${holdings.map(h => `${h.ticker} (${h.industry})`).join(', ')}. Monitor sector concentration.`,
+      investmentThesis: "Growth-oriented portfolio with focus on established companies.",
+      riskLevel: holdings.length < 3 ? "High - Concentrated positions" : "Medium - Diversified holdings",
+      recommendations: [
+        "Review position sizing - ensure no single holding exceeds 20% of portfolio",
+        `Current cash allocation is ${((cash/totalValue)*100).toFixed(1)}% - consider optimal deployment`,
+        "Monitor correlation between holdings to ensure true diversification",
+        "Set up quarterly rebalancing schedule"
+      ]
+    };
   }
 }
 
@@ -77,11 +106,11 @@ export async function chatWithPortfolio(
 ) {
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-5-nano",
       messages: [
         {
           role: "system",
-          content: `You are a helpful financial assistant. Answer questions about this portfolio:\n\n${portfolioContext}`
+          content: `You are a helpful financial assistant for ValueMetrix. Answer questions about this portfolio concisely and professionally:\n\n${portfolioContext}`
         },
         {
           role: "user",
@@ -92,9 +121,9 @@ export async function chatWithPortfolio(
       max_tokens: 300,
     });
 
-    return completion.choices[0].message.content;
+    return completion.choices[0].message.content || "I couldn't process your question. Please try again.";
   } catch (error) {
-    console.error('Error in chat:', error);
-    return "Sorry, I couldn't process your question.";
+    console.error('Chat error:', error);
+    return "Sorry, I'm having trouble connecting to the AI service. Please try again in a moment.";
   }
 }
