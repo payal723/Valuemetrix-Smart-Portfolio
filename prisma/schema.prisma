@@ -1,0 +1,78 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  email     String     @unique
+  name      String?
+  password  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  portfolios Portfolio[]
+}
+
+model Portfolio {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  cash        Float    @default(0)
+  visibility  String   @default("private") // private, public, smart_shared
+  userId      String   @db.ObjectId
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  holdings    Holding[]
+  sharedAccess SharedPortfolioAccess[]
+  insights    AIInsight[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Holding {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  ticker      String
+  quantity    Int
+  portfolioId String    @db.ObjectId
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model SharedPortfolioAccess {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  token       String    @unique
+  portfolioId String    @db.ObjectId
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  isActive    Boolean   @default(true)
+  viewCount   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime?
+  accessLogs  TokenAccessLog[]
+}
+
+model TokenAccessLog {
+  id          String                 @id @default(auto()) @map("_id") @db.ObjectId
+  accessId    String                 @db.ObjectId
+  access      SharedPortfolioAccess  @relation(fields: [accessId], references: [id], onDelete: Cascade)
+  viewerIP    String?
+  viewerAgent String?
+  viewedAt    DateTime               @default(now())
+}
+
+model AIInsight {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  portfolioId String    @db.ObjectId
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  summary     String
+  diversification String
+  sectorExposure String
+  investmentThesis String
+  riskLevel   String
+  generatedAt DateTime  @default(now())
+}
