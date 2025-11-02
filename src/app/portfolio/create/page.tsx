@@ -94,28 +94,34 @@ export default function CreatePortfolioPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <nav className="bg-slate-800/50 backdrop-blur border-b border-slate-700">
-        <div className="container mx-auto px-4 py-4">
-          <Link href="/dashboard" className="text-cyan-400 hover:text-cyan-300">
-            ← Back to Dashboard
+      {/* Navbar */}
+      <nav className="bg-slate-800/50 backdrop-blur border-b border-slate-700 sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-3 md:py-4">
+          <Link href="/dashboard" className="text-cyan-400 hover:text-cyan-300 text-sm md:text-base inline-flex items-center gap-2">
+            <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to Dashboard
           </Link>
         </div>
       </nav>
 
-      <div className="container mx-auto px-4 py-12 max-w-3xl">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Create Portfolio</h1>
-          <p className="text-gray-400">Build your investment portfolio with AI insights</p>
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-6 md:py-12 max-w-3xl">
+        <div className="text-center mb-6 md:mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Create Portfolio</h1>
+          <p className="text-gray-400 text-sm md:text-base">Build your investment portfolio with AI insights</p>
         </div>
 
-        <div className="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-2xl p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-xl md:rounded-2xl p-5 md:p-8">
+          <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
             {error && (
-              <div className="bg-red-900/20 border border-red-500 text-red-300 px-4 py-3 rounded-lg">
+              <div className="bg-red-900/20 border border-red-500 text-red-300 px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
+            {/* Portfolio Name */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Portfolio Name *
@@ -125,11 +131,12 @@ export default function CreatePortfolioPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500"
+                className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 md:py-3 text-sm md:text-base focus:outline-none focus:border-cyan-500 transition"
                 placeholder="My Tech Portfolio"
               />
             </div>
 
+            {/* Description */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Description (Optional)
@@ -138,11 +145,12 @@ export default function CreatePortfolioPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
-                className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500"
+                className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 md:py-3 text-sm md:text-base focus:outline-none focus:border-cyan-500 transition resize-none"
                 placeholder="Growth-focused tech stocks portfolio"
               />
             </div>
 
+            {/* Cash Balance */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Cash Balance ($) *
@@ -154,10 +162,11 @@ export default function CreatePortfolioPage() {
                 required
                 min="0"
                 step="0.01"
-                className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500"
+                className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 md:py-3 text-sm md:text-base focus:outline-none focus:border-cyan-500 transition"
               />
             </div>
 
+            {/* Visibility */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Visibility *
@@ -165,7 +174,7 @@ export default function CreatePortfolioPage() {
               <select
                 value={visibility}
                 onChange={(e) => setVisibility(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500"
+                className="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 md:py-3 text-sm md:text-base focus:outline-none focus:border-cyan-500 transition"
               >
                 <option value="private">Private (Only me)</option>
                 <option value="public">Public (Listed)</option>
@@ -173,15 +182,16 @@ export default function CreatePortfolioPage() {
               </select>
             </div>
 
+            {/* Holdings */}
             <div>
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                 <label className="block text-sm font-medium text-gray-300">
                   Holdings *
                 </label>
                 <button
                   type="button"
                   onClick={addHolding}
-                  className="bg-cyan-600 hover:bg-cyan-700 text-white text-sm px-4 py-2 rounded-lg transition"
+                  className="bg-cyan-600 hover:bg-cyan-700 text-white text-sm px-4 py-2 rounded-lg transition w-full sm:w-auto"
                 >
                   + Add Holding
                 </button>
@@ -189,43 +199,46 @@ export default function CreatePortfolioPage() {
 
               <div className="space-y-3">
                 {holdings.map((holding, index) => (
-                  <div key={index} className="flex gap-3">
+                  <div key={index} className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                     <input
                       type="text"
                       value={holding.ticker}
                       onChange={(e) => updateHolding(index, 'ticker', e.target.value)}
                       placeholder="AAPL"
-                      className="flex-1 bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500 uppercase"
+                      className="flex-1 bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 md:py-3 text-sm md:text-base focus:outline-none focus:border-cyan-500 uppercase"
                     />
-                    <input
-                      type="number"
-                      value={holding.quantity}
-                      onChange={(e) => updateHolding(index, 'quantity', e.target.value)}
-                      placeholder="100"
-                      min="1"
-                      className="w-32 bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500"
-                    />
-                    {holdings.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeHolding(index)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-4 rounded-lg transition"
-                      >
-                        ✕
-                      </button>
-                    )}
+                    <div className="flex gap-2 sm:gap-3">
+                      <input
+                        type="number"
+                        value={holding.quantity}
+                        onChange={(e) => updateHolding(index, 'quantity', e.target.value)}
+                        placeholder="Quantity"
+                        min="1"
+                        className="flex-1 sm:w-28 bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2.5 md:py-3 text-sm md:text-base focus:outline-none focus:border-cyan-500"
+                      />
+                      {holdings.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeHolding(index)}
+                          className="bg-red-600 hover:bg-red-700 text-white px-3 md:px-4 rounded-lg transition flex-shrink-0"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
               <p className="text-xs text-gray-500 mt-2">
-                Popular tickers: AAPL, TSLA, MSFT, GOOGL, AMZN, NVDA, META
+                Popular: AAPL, TSLA, MSFT, GOOGL, AMZN, NVDA, META
               </p>
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 disabled:from-slate-600 disabled:to-slate-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-lg"
+              className="w-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 disabled:from-slate-600 disabled:to-slate-700 text-white font-bold py-3 md:py-3.5 px-4 rounded-lg transition shadow-lg text-sm md:text-base"
             >
               {loading ? 'Creating Portfolio...' : 'Create Portfolio'}
             </button>
