@@ -202,16 +202,6 @@ git remote add origin <your-repo-url>
 git push -u origin main
 ```
 
-2. **Deploy to Vercel**
-- Go to [Vercel](https://vercel.com)
-- Import your GitHub repository
-- Add environment variables
-- Deploy
-
-3. **Update NEXTAUTH_URL**
-```env
-NEXTAUTH_URL="https://your-app.vercel.app"
-```
 
 ## 🎯 Usage Flow
 
@@ -223,34 +213,7 @@ NEXTAUTH_URL="https://your-app.vercel.app"
 6. **Ask Questions** → Interactive AI chatbot
 7. **Track Analytics** → See view counts and access logs
 
-## 🔄 API Endpoints
 
-### Authentication
-- `POST /api/auth/signup` - Create account
-- `POST /api/auth/signin` - Login
-- `GET /api/auth/session` - Get session
-
-### Portfolio Management
-- `GET /api/portfolio` - List user portfolios
-- `POST /api/portfolio` - Create portfolio
-- `POST /api/portfolio/[id]/share` - Generate share link
-- `DELETE /api/portfolio/[id]/share` - Revoke access
-
-### AI Features
-- `POST /api/portfolio/[id]/insights` - Generate insights
-- `GET /api/portfolio/[id]/insights` - Get latest insights
-- `POST /api/portfolio/[id]/chat` - Chat with AI
-
-## 💡 Future Enhancements
-
-- [ ] Weekly cron job for insight regeneration
-- [ ] Advanced charting with historical performance
-- [ ] Email notifications for portfolio changes
-- [ ] Export portfolio as PDF
-- [ ] Multi-currency support
-- [ ] Performance benchmarking vs indices
-- [ ] Social features (follow other portfolios)
-- [ ] Mobile app with React Native
 
 ## 🐛 Known Limitations
 
@@ -260,17 +223,6 @@ NEXTAUTH_URL="https://your-app.vercel.app"
 4. **Sector Classification**: Depends on Finnhub data accuracy
 5. **Chat History**: Not persisted (resets on page refresh)
 
-## 📝 License
-
-MIT License
-
-## 👨‍💻 Author
-
-Built for ValueMetrix Full Stack Developer Assignment
-
----
-
-**Estimated Development Time**: 15-20 hours
 
 **Key Highlights**:
 - Production-ready codebase
